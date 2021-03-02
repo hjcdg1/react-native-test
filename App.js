@@ -1,8 +1,26 @@
-import React, { useEffect, useRef } from 'react';
-import { StyleSheet, View, BackHandler } from 'react-native';
+import React, { useRef, useEffect, useCallback } from 'react';
+import { StyleSheet, View, BackHandler, Platform } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { StatusBar } from 'expo-status-bar';
 import Constants from 'expo-constants';
+import appsFlyer from 'react-native-appsflyer';
+
+/* Initializing the SDK */
+appsFlyer.initSdk(
+  {
+    devKey: 'K2***********99',
+    isDebug: false,
+    appId: '41*****44',
+    onInstallConversionDataListener: true,  // Optional
+    onDeepLinkListener: true  // Optional
+  },
+  (result) => {
+    console.log(result);
+  },
+  (error) => {
+    console.error(error);
+  }
+);
 
 export default function App() {
   const webview = useRef(null);
@@ -15,6 +33,10 @@ export default function App() {
     return false;
   };
 
+  const handleMessage = useCallback((event) => {
+    console.log(JSON.parse(event.nativeEvent.data));
+  }, []);
+
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', onAndroidBackPress);
     return () => {
@@ -25,8 +47,9 @@ export default function App() {
   return (
     <View style={styles.container}>
       <WebView
-        source={{ uri: 'https://www.opengallery.co.kr/luna/' }}
+        source={{ uri: 'http://172.16.2.60:8000/' }}
         ref={webview}
+        onMessage={handleMessage}
       />
       <StatusBar style="auto" />
     </View>
@@ -41,3 +64,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff'
   }
 });
+
+/*
+# 웹 뷰에서 실행시켜야 하는 JavaScript
+# 웹 뷰에서 RN으로 데이터를 전송하는 메커니즘에 해당한다.
+if (window.ReactNativeWebView) {
+    window.ReactNativeWebView.postMessage(
+        JSON.stringify({
+            af_revenue: '6.72',
+            af_content_type: 'wallets',
+            af_content_id: '15854'
+        })
+    );
+}
+*/
