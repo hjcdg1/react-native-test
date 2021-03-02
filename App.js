@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { StyleSheet, View, BackHandler } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { StatusBar } from 'expo-status-bar';
+import Constants from 'expo-constants';
 
 export default function App() {
   const webview = useRef(null);
@@ -36,7 +37,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    paddingTop: Platform.OS === 'ios' ? 0 : Expo.Constants.statusBarHeight,
+    paddingTop: Platform.OS === 'ios' ? 0 : Constants.statusBarHeight,
     backgroundColor: '#ffffff'
   }
 });
